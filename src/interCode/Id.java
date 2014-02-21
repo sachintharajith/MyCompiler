@@ -12,12 +12,12 @@ import symbols.*;
  */
 public class Id extends Expr {
     public int offset; //relative address
-    public Id (Word id , Type p , int b) {
-        super ( id , p );
-        offset = b ;
+    public Id (Word id,Type p,int b) {
+        super (id,p);
+        offset = b;
     }
     @Override
-    public Expr gen() {return this;}
+    public Expr gen(){return this;}
     @Override
-    public Expr reduce () {return this;}
+    public Expr reduce(){return this;}
 }
