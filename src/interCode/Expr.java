@@ -14,8 +14,8 @@ public class Expr extends Node {
     public Token op;
     public Type type;
 
-    public Expr(Token op, Type type) {
-        this.op = op;
+    public Expr(Token operand, Type type) {
+        this.op = operand;
         this.type = type;
     }
     public Expr gen() {

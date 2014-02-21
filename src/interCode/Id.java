@@ -16,8 +16,4 @@ public class Id extends Expr {
         super (id,p);
         offset = b;
     }
-    @Override
-    public Expr gen(){return this;}
-    @Override
-    public Expr reduce(){return this;}
 }
