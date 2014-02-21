@@ -5,6 +5,7 @@ This is a simple compiler which will generate the three address code and post fi
 free grammar. 
 
 The grammar is as follows,
+
   P → D L
   
   D → B N ; D | B N ;
@@ -36,4 +37,11 @@ The compiler consists of,
 -- A simple lexer
 -- A recursive decent parser
 -- SDT for postfix notation generation
--- Stack based im
+-- Stack based implementation for evaluate postfix notations
+-- Intermediate code generator to generate three address code
+-- IC optimizer
+
+
+The first three parts are already implemented and currently working on others.
+
+If Any clarifications needed, send me an E-mail to sachintha.rajith@gmail.com
