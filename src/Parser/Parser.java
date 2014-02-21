@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package Parser;
+package parser;
 import java.io.*;
 import java.util.*;
 import lexer.*;

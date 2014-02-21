@@ -5,7 +5,7 @@
 
 package compilerproject;
 import lexer.*;
-import Parser.*;
+import parser.*;
 /**
  *
  * @author vindyani
