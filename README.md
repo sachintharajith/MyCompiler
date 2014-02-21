@@ -6,14 +6,23 @@ free grammar.
 
 The grammar is as follows,
   P → D L
+  
   D → B N ; D | B N ;
+  
   B → int | float
+  
   N → N , id | id
+  
   L → S ; L | S ;
+  
   S → id = E | E
+  
   E → E + T | T
+  
   T → T × F | F
+  
   F → ( E ) | num | id
+  
   
 The following CFG rules define the syntax of simple infix expressions that can have the basic mathematical operations 
 (addition and multiplication) and can have numbers and variables.
