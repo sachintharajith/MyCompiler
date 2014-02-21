@@ -34,11 +34,17 @@ is a single lowercase English letter. The list of expressions contains assignmen
 multiplications.
 
 The compiler consists of,
+
 -- A simple lexer
+
 -- A recursive decent parser
+
 -- SDT for postfix notation generation
+
 -- Stack based implementation for evaluate postfix notations
+
 -- Intermediate code generator to generate three address code
+
 -- IC optimizer
 
 
