@@ -20,6 +20,6 @@ public class Node{
         throw new Error("near line "+lexline+ ": "+s);
     }
     public void emit (String s ){
-        System.out.println (" \t " + s );
+        System.out.println (s);
     }
 }
