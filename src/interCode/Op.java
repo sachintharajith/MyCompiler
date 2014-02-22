@@ -20,7 +20,7 @@ public class Op extends Expr{
     public Expr reduce(){
         Expr x = gen();
         Temp t = new Temp(type);
-        emit(t.toString()+ " = " + x.toString());
+        System.out.println(t.toString()+ " = " + x.toString());
         return t;
     }
 }

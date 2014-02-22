@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 import lexer.*;
 import symbols.*;
+import interCode.*;
 
 /**
  *
@@ -21,6 +22,7 @@ public class Parser{
     private Token front = null;
     private BufferedWriter bw1;
     private BufferedWriter bw2;
+    private Expr e;
     public Parser (Lexer l) throws IOException{
         lex = l;
         bw1 =new BufferedWriter(new FileWriter("PostFix.txt"));
@@ -94,8 +96,10 @@ public class Parser{
         while(look.tag != Tag.EOF){
             stmt();
             match(';');
-            System.out.print("\n");
+            Expr t = e.gen();
+            t.reduce();
         }
+        
     }
 
    private void stmt() throws IOException{
@@ -129,57 +133,70 @@ public class Parser{
            error ("syntax error") ;
    }
 
-   private void expression() throws IOException{
-            term();
-            expressionp();
+   private Expr expression() throws IOException{
+            e =term();
+            e = expressionp(e);
+            //System.out.println(e.toString());
+            return e;
    }
 
-   private void expressionp() throws IOException{
+   private Expr expressionp(Expr e) throws IOException{
         while(look.tag == '+'){
+            Token t = look;
             move();
-            term();
-            System.out.print("+ ");
+            //System.out.print("+ ");    
+            e = new Arith(t, e, term());
+            
         }
+       // System.out.println(e.toString());
+        return e;
    }
-   private void term() throws IOException{
-            factor();
-            termp();
+   private Expr term() throws IOException{
+            e = factor();
+            return termp(e);
    }
-   private void termp() throws IOException{
+   private Expr termp(Expr e) throws IOException{
         while(look.tag == '*'){
+            Token t = look;
             move();
-            factor();
-            System.out.print("* ");
+           
+                e = new Arith(t, e, factor());
+            
         }
+        return e;
    }
-   private void factor() throws IOException{
+   private Expr factor() throws IOException{
+       Expr x = null;
         switch(look.tag){
             case '(':
                 match('(');
-                expression();
+                x = expression();
                 match(')');
-                break;
-            case 256:                   //case for integers
+                return x;
+            case Tag.NUM:                   //case for integers
                 Num num = (Num)look;
-                System.out.print(num.value+" ");
-                match(Tag.NUM);
-                break;
-            case 257:
-                Token temp = look;
-                move();         //case for identifiers
-                Word w = (Word)temp;
+               // System.out.print(num.value+" ");
+                x = new Expr(look,Type.Int);
+                move();
+                return x;
+            case Tag.ID:
+                Word w = (Word)look;
                 if(symbolt.get(w.lexeme) == null){
                     error (w.lexeme + " not defined") ;
                 }
                 System.out.print(w.lexeme+" ");
-                break;
-            case 259:
+                x = new Expr(look,Type.Float);
+                move();         //case for identifiers
+                return x;
+            case Tag.REAL:
                 Real real = (Real)look;
-                System.out.print(real.value+" ");
-                match(Tag.REAL);        //case for floating point number 
-                break;
+               // System.out.print(real.value+" ");
+                x = new Expr(look,Type.Float);
+                move();        //case for floating point number
+                return x;
             default:
               error ("syntax error");
+              return x;
         }
    }
 

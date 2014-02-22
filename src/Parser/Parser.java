@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 import lexer.*;
 import symbols.*;
+import interCode.*;
 
 /**
  *
@@ -129,30 +130,36 @@ public class Parser{
            error ("syntax error") ;
    }
 
-   private void expression() throws IOException{
-            term();
-            expressionp();
+   private Expr expression() throws IOException{
+            Expr e =term();
+            return expressionp(e);
    }
 
-   private void expressionp() throws IOException{
+   private Expr expressionp(Expr e) throws IOException{
         while(look.tag == '+'){
+            Token t = look;
             move();
-            term();
             System.out.print("+ ");
+            e = new Arith(t,e,term());
         }
+        return e;
    }
-   private void term() throws IOException{
-            factor();
-            termp();
+   private Expr term() throws IOException{
+            Expr e = factor();
+            return termp(e);
    }
-   private void termp() throws IOException{
+   private Expr termp(Expr e) throws IOException{
         while(look.tag == '*'){
+            Token t = look;
             move();
             factor();
             System.out.print("* ");
+            e = new Arith(t,e,term());
         }
+        return e;
    }
-   private void factor() throws IOException{
+   private Expr factor() throws IOException{
+       Expr x = null;
         switch(look.tag){
             case '(':
                 match('(');
@@ -162,22 +169,24 @@ public class Parser{
             case 256:                   //case for integers
                 Num num = (Num)look;
                 System.out.print(num.value+" ");
-                match(Tag.NUM);
-                break;
+                x = new Expr(look,Type.Int);
+                move();
+                return x;
             case 257:
-                Token temp = look;
-                move();         //case for identifiers
-                Word w = (Word)temp;
+                Word w = (Word)look;
                 if(symbolt.get(w.lexeme) == null){
                     error (w.lexeme + " not defined") ;
                 }
                 System.out.print(w.lexeme+" ");
-                break;
+                x = new Expr(look,Type.Float);
+                move();         //case for identifiers
+                return x;
             case 259:
                 Real real = (Real)look;
                 System.out.print(real.value+" ");
-                match(Tag.REAL);        //case for floating point number 
-                break;
+                x = new Expr(look,Type.Float);
+                move();        //case for floating point number
+                return x;
             default:
               error ("syntax error");
         }
