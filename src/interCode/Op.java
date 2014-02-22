@@ -4,8 +4,7 @@
  */
 
 package interCode;
-
-import lexer.Token;
+import lexer.*;
 import symbols.Type;
 
 /**

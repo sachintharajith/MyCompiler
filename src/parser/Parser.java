@@ -98,6 +98,7 @@ public class Parser{
             match(';');
             Expr t = e.gen();
             t.reduce();
+            //System.out.println(t.type.lexeme);
         }
         
     }
@@ -121,7 +122,8 @@ public class Parser{
             System.out.print(w.lexeme+" ");
             if(look.tag == '='){
                 match('=');
-                expression();
+                Expr e = expression();
+               // e.
                 System.out.print("= ");
             }else{
                 movable = false;
@@ -158,10 +160,8 @@ public class Parser{
    private Expr termp(Expr e) throws IOException{
         while(look.tag == '*'){
             Token t = look;
-            move();
-           
-                e = new Arith(t, e, factor());
-            
+            move();       
+            e = new Arith(t, e, factor());           
         }
         return e;
    }
