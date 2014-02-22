@@ -45,6 +45,8 @@ The compiler consists of,
 
 -- Intermediate code generator to generate three address code
 
+-- Simple type checker with widening operations and restricting narrowing operations
+
 -- IC optimizer
 
 
