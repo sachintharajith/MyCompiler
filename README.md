@@ -2,12 +2,12 @@ MyCompiler
 ==========
 
 Acknowledgement
-===============
+---------------
 
 Some of the design and implementation was adapted by Dragon Book (Compilers: Principles, Techniques, and by Alfred V. Aho, Monica S. Lam, Ravi Sethi, and Jeffrey D. Ullman)
 
 Introduction
-============
+------------
 
 This is a simple compiler which will generate the three address code and post fix notation for a predefined context 
 free grammar. 
@@ -43,7 +43,7 @@ multiplications.
 
 
 Features
-========
+--------
 
 The compiler consists of,
 
