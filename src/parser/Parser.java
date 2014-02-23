@@ -5,7 +5,6 @@
 
 package parser;
 import java.io.*;
-import java.util.*;
 import lexer.*;
 import symbols.*;
 import interCode.*;
@@ -17,12 +16,12 @@ import interCode.*;
 public class Parser{
     private Lexer lex;    //lexer to get tokens
     private Token look;     //current lookahead token
-    public static Hashtable symbolt= new Hashtable();
     private Boolean movable = true;
     private Token front = null;
     private BufferedWriter bw1;
     private BufferedWriter bw2;
     private Expr e;
+    private int offset = 0; //relative offset for each variable
     public Parser (Lexer l) throws IOException{
         lex = l;
         bw1 =new BufferedWriter(new FileWriter("PostFix.txt"));
@@ -63,31 +62,27 @@ public class Parser{
         }
     }
     private Type type() throws IOException{
-        Type p = null;
-        try {
-         p = (Type)look;
-        } catch (Exception e) {
-        }
+        Token tok = look;
         match(Tag.BASIC);
+        Type p = (Type)tok;
         return p;
 
     }
     private void id(Type t) throws IOException{
-        Word w = (Word)look;
+        Token tok = look;
         match(Tag.ID);
-        symbolt.put(w.lexeme,t); //add variable name and type object to symbol table
+        Id id = new Id((Word)tok,t,offset);
+        SymbolT.add(tok,id); //add variable to symbol table
+        offset += t.width;      
         idp(t);
     }
     private void idp(Type t) throws IOException{
         while(look.tag == ','){
-            Word w = null;
-            match(',');
-            try {
-               w = (Word)look;
-            } catch (Exception e) {
-            }
+            move();
+            Token tok = look;
             match(Tag.ID);
-            symbolt.put(w.lexeme,t); //add variable name and type object to symbol table
+            Id id = new Id((Word)tok,t,offset);
+            SymbolT.add(tok,id); //add variable to symbol table
         }
     }
 
@@ -95,10 +90,7 @@ public class Parser{
     private void list() throws IOException{
         while(look.tag != Tag.EOF){
             stmt();
-            match(';');
-            Expr t = e.gen();
-            t.reduce();
-            //System.out.println(t.type.lexeme);
+            match(';');           
         }
         
     }
@@ -115,21 +107,28 @@ public class Parser{
         */
        if(look.tag == '(' || look.tag == Tag.NUM || look.tag == Tag.REAL){
             expression();
+            Expr t = e.gen();
+            t.reduce();
        }else if( look.tag == Tag.ID){
             Token temp = look;
             match(Tag.ID);
-            Word w = (Word)temp;
-            System.out.print(w.lexeme+" ");
             if(look.tag == '='){
-                match('=');
-                Expr e = expression();
-               // e.
-                System.out.print("= ");
+                move();
+                Id id = SymbolT.get(temp);
+                Word w = (Word)temp;
+                if(id == null){
+                    error (w.lexeme + " not defined") ;
+                }
+                Stmt s =new interCode.Set(id,expression());
+                //System.out.print("= ");
+                s.gen();
             }else{
                 movable = false;
                 front = look;
                 look = temp;
                 expression();
+                Expr t = e.gen();
+                t.reduce();
             }
        }else
            error ("syntax error") ;
@@ -180,12 +179,12 @@ public class Parser{
                 move();
                 return x;
             case Tag.ID:
-                Word w = (Word)look;
-                if(symbolt.get(w.lexeme) == null){
+                x = SymbolT.get(look);
+                if(x == null){
+                    Word w = (Word)look;
                     error (w.lexeme + " not defined") ;
                 }
-                System.out.print(w.lexeme+" ");
-                x = new Expr(look,Type.Float);
+               // System.out.print(w.lexeme+" ");
                 move();         //case for identifiers
                 return x;
             case Tag.REAL:

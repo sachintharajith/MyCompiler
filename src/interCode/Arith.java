@@ -14,8 +14,7 @@ public class Arith extends Expr{
     public Expr exprl , expr2 ;
     public Arith (Token tok , Expr x1 , Expr x2) {
         super(tok , Type.max (x1.type , x2.type));
-        exprl = x1; expr2 = x2;
-        
+        exprl = x1; expr2 = x2;       
     }
     
     @Override
@@ -28,7 +27,7 @@ public class Arith extends Expr{
         expr2 = widen(expr2, expr2.type, type);
         Expr x = gen();
         Temp t = new Temp(type);
-        System.out.println(t.toString()+ " = " + x.toString());
+        emit(t.toString()+ " = " + x.toString());
         return t;
     }
     @Override

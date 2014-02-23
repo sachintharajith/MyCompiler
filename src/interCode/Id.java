@@ -16,4 +16,10 @@ public class Id extends Expr {
         super (id,p);
         offset = b;
     }
+
+    @Override
+    public String toString(){
+        Word w = (Word)op;
+        return w.lexeme;
+    }
 }
