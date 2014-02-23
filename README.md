@@ -4,7 +4,7 @@ MyCompiler
 Acknowledgement
 ---------------
 
-Some of the design and implementation was adapted by Dragon Book (Compilers: Principles, Techniques, and by Alfred V. Aho, Monica S. Lam, Ravi Sethi, and Jeffrey D. Ullman)
+Some of the design and implementation of this project were adapted by Dragon Book (Compilers: Principles, Techniques, and by Alfred V. Aho, Monica S. Lam, Ravi Sethi, and Jeffrey D. Ullman)
 
 Introduction
 ------------
