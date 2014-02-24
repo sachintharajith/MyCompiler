@@ -4,6 +4,7 @@
  */
 
 package interCode;
+import java.io.IOException;
 import symbols.*;
 /**
  *
@@ -27,7 +28,7 @@ public class Set extends Stmt {
         
     }
     @Override
-    public void gen() {            
+    public void gen(){            
             Expr t = expr.gen(); //generate RHS of the assignemnt (stmt) -- evaluateinternal nodes
             Expr rt = t.reduce(); // evaluate root
             type = symbols.Type.max(id.type,expr.type); // get maxmimum type of RHS and LHS

@@ -4,6 +4,7 @@
  */
 
 package interCode;
+import java.io.IOException;
 import lexer.*;
 import symbols.*;
 /**

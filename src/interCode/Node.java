@@ -10,6 +10,9 @@ package interCode;
  * @author vindyani
  */
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lexer.*;
 public class Node{
     int lexline = 0 ;
@@ -21,5 +24,11 @@ public class Node{
     }
     public void emit (String s ){
         System.out.println (s);
+        try {
+            parser.Parser.bw2.write(s);
+            parser.Parser.bw2.newLine();
+        } catch (IOException ex) {
+            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

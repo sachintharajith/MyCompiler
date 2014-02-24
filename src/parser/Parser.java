@@ -4,10 +4,12 @@
  */
 
 package parser;
+import java.util.*;
 import java.io.*;
 import lexer.*;
 import symbols.*;
 import interCode.*;
+import java.util.Stack;
 
 /**
  *
@@ -19,13 +21,17 @@ public class Parser{
     private Boolean movable = true;
     private Token front = null;
     private BufferedWriter bw1;
-    private BufferedWriter bw2;
+    public static BufferedWriter bw2;
     private Expr e;
     private int offset = 0; //relative offset for each variable
+    private Stack <Double> machine = new Stack<Double>();
+    private Hashtable<Token,Double> var= new Hashtable<Token,Double>();
+    private Token Rhs;
     public Parser (Lexer l) throws IOException{
         lex = l;
         bw1 =new BufferedWriter(new FileWriter("PostFix.txt"));
         bw2 =new BufferedWriter(new FileWriter("ThreeAddress.txt"));
+        
         move();
     }
     void move() throws IOException {
@@ -90,9 +96,19 @@ public class Parser{
     private void list() throws IOException{
         while(look.tag != Tag.EOF){
             stmt();
-            match(';');           
+            match(';');
+            emit(bw1, "; ");
+            Number num = machine.pop();
+            if(SymbolT.get(Rhs).type == Type.Int){
+                emit(bw1,Integer.toString(num.intValue()));
+            }else if(SymbolT.get(Rhs).type == Type.Float){
+                emit(bw1,num.toString());
+            }
+            
+            bw1.newLine();
         }
-        
+        bw1.close();
+        bw2.close();
     }
 
    private void stmt() throws IOException{
@@ -112,15 +128,18 @@ public class Parser{
        }else if( look.tag == Tag.ID){
             Token temp = look;
             match(Tag.ID);
+            Word w = (Word)temp;
+            emit(bw1,w.lexeme+" ");
             if(look.tag == '='){
+                Rhs = temp;
                 move();
                 Id id = SymbolT.get(temp);
-                Word w = (Word)temp;
                 if(id == null){
                     error (w.lexeme + " not defined") ;
                 }
                 Stmt s =new interCode.Set(id,expression());
-                //System.out.print("= ");
+                emit(bw1,"= ");
+                var.put(w,machine.peek());
                 s.gen();
             }else{
                 movable = false;
@@ -137,7 +156,6 @@ public class Parser{
    private Expr expression() throws IOException{
             e =term();
             e = expressionp(e);
-            //System.out.println(e.toString());
             return e;
    }
 
@@ -145,11 +163,10 @@ public class Parser{
         while(look.tag == '+'){
             Token t = look;
             move();
-            //System.out.print("+ ");    
             e = new Arith(t, e, term());
-            
+            emit(bw1,"+ ");
+            machinePop(t);
         }
-       // System.out.println(e.toString());
         return e;
    }
    private Expr term() throws IOException{
@@ -159,8 +176,10 @@ public class Parser{
    private Expr termp(Expr e) throws IOException{
         while(look.tag == '*'){
             Token t = look;
-            move();       
-            e = new Arith(t, e, factor());           
+            move();
+            e = new Arith(t, e, factor());
+            emit(bw1,"* ");
+            machinePop(t);
         }
         return e;
    }
@@ -174,23 +193,30 @@ public class Parser{
                 return x;
             case Tag.NUM:                   //case for integers
                 Num num = (Num)look;
-               // System.out.print(num.value+" ");
+                emit(bw1,num.value+" ");
                 x = new Expr(look,Type.Int);
+                machine.push((double)num.value);
                 move();
                 return x;
             case Tag.ID:
                 x = SymbolT.get(look);
+                Word w = (Word)look;
                 if(x == null){
-                    Word w = (Word)look;
                     error (w.lexeme + " not defined") ;
                 }
-               // System.out.print(w.lexeme+" ");
+                emit(bw1,w.lexeme+" ");
+                double val = 0;
+                if(var.get(w) != null){
+                    val=var.get(w);
+                }
+                machine.push(val);
                 move();         //case for identifiers
                 return x;
             case Tag.REAL:
                 Real real = (Real)look;
-               // System.out.print(real.value+" ");
+                emit(bw1,real.value+" ");
                 x = new Expr(look,Type.Float);
+                machine.push((double)real.value);
                 move();        //case for floating point number
                 return x;
             default:
@@ -199,8 +225,24 @@ public class Parser{
         }
    }
 
-   private void writeToFile(BufferedWriter bw,String s) throws IOException{
+   private void emit(BufferedWriter bw,String s) throws IOException{
        bw.write(s);
+   }
+
+   private void machinePop(Token operator){
+        double num1 =  machine.pop(), num2 = machine.pop(), result = 0;
+        switch(operator.tag){
+            case '+':
+                result = num1+num2;
+                break;
+            case '*':
+                result = num1*num2;
+                break;
+            default:
+                error("something went wrong!");
+
+        }
+        machine.push(result);
    }
 }
 
