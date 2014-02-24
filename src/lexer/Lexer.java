@@ -20,7 +20,7 @@ public class Lexer {
         words.put(w.lexeme, w);
     }
 
-    public Lexer(String sourceFile) throws IOException{
+    public Lexer(File sourceFile) throws IOException{
         in = new FileInputStream(sourceFile);
         reserve(Type.Int);
         reserve(Type.Float);
@@ -29,15 +29,6 @@ public class Lexer {
     void readch() throws IOException{
         peek = (char)in.read();
     }
-
-//    boolean readch(char c) throws IOException{
-//       readch();
-//       if(peek != c){
-//            return false;
-//       }
-//       peek = ' ';
-//       return false;
-//    }
 
     public Token scan() throws IOException{
         for(; ;readch()){
