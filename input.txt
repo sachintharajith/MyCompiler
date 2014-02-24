@@ -1,5 +1,0 @@
-int a,b;
-float c,d;
-b=23;
-c=5;
-a = b+c;
