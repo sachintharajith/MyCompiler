@@ -61,6 +61,17 @@ The compiler consists of,
 
 -- IC optimizer
 
+How to Run
+----------
+
+-- Download the source code
+
+-- Build using apache Ant or netbeans IDE. (You can open the project in NeBeans since the configuration files are          available)
+
+-- Give source file as the input parameter
+
+-- The three address code is displayed in console and Two files will be created with Post Fix notations and three          address code. These will be created in parent directory of the project
+
 
 The first three parts are already implemented and currently working on others.
 
