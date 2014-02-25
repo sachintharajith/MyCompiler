@@ -59,7 +59,7 @@ The compiler consists of,
 
 -- Simple type checker with widening operations and restricting narrowing operations
 
--- IC optimizer
+-- Machine independent code optimizer(global common-sub expression elimination)
 
 How to Run
 ----------
