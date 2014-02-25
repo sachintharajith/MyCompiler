@@ -7,7 +7,6 @@ package interCode;
 import java.util.Hashtable;
 import lexer.Token;
 import symbols.*;
-import parser.*;
 /**
  *
  * @author vindyani
@@ -46,8 +45,13 @@ public class Arith extends Expr{
     public Expr widen(Expr a,Type t, Type w){
          if(t.lexeme.equals(w.lexeme)) return a;
          else if(t == Type.Int && w == Type.Float){
-             Temp temp = new Temp(type);
-             emit(temp.toString()+ " = (float)" + a.toString());
+             Temp temp = (Temp)expressions.get(a.toString());
+             if(temp == null){
+                temp = new Temp(type);
+                emit(temp.toString()+ " = (float)" + a.toString());
+                expressions.put(a.toString(), temp);
+                return temp;
+             }  
              return temp;
          }
          else error("Type mismatch");

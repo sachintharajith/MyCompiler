@@ -39,8 +39,13 @@ public class Set extends Stmt {
     public Expr widen(Expr a,Type t, Type w){
          if(t.lexeme.equals(w.lexeme)) return a;
          else if(t == Type.Int && w == Type.Float){
-             Temp temp = new Temp(t);
-             emit(temp.toString()+ " = (float)" + a.toString());
+             Temp temp = (Temp)Arith.expressions.get(a.toString());
+             if(temp == null){
+                temp = new Temp(type);
+                emit(temp.toString()+ " = (float)" + a.toString());
+                Arith.expressions.put(a.toString(), temp);
+                return temp;
+             }
              return temp;
          }
          else error("Type mismatch");
