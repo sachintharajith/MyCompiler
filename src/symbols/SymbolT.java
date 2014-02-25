@@ -15,7 +15,7 @@ import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
  * It has methods to put an identifier to symbol table and get the Id corresponding to a given token
  */
 public class SymbolT {
-    public static Hashtable table = new Hashtable();;
+    public static Hashtable table = new Hashtable();
 
     public static void add(Token t, Id i){
         table.put(t, i);

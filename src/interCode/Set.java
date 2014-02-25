@@ -27,13 +27,13 @@ public class Set extends Stmt {
         }else{return null;}
         
     }
-    @Override
-    public void gen(){            
+    public Expr gen(){
             Expr t = expr.gen(); //generate RHS of the assignemnt (stmt) -- evaluateinternal nodes
             Expr rt = t.reduce(); // evaluate root
             type = symbols.Type.max(id.type,expr.type); // get maxmimum type of RHS and LHS
             rt = widen(rt,rt.type,type); // do widening for evaluated EHS expression
             emit(id .toString() +  " = "+ rt.toString() );
+            return t;
     }
 
     public Expr widen(Expr a,Type t, Type w){

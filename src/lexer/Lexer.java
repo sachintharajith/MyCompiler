@@ -86,7 +86,7 @@ public class Lexer {
             return w;
         }
         Token tok = new Token(peek);
-        peek = ' ';
+        readch();
         //System.out.println(tok.toString());
         return tok ;
     }

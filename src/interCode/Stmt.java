@@ -5,11 +5,13 @@
 
 package interCode;
 
+import symbols.Type;
+
 /**
  *
  * @author vindyani
  */
 public class Stmt extends Node {
 public Stmt () { }
-public void gen () {}
+public Expr gen () {return null;}
 }

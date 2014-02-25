@@ -95,23 +95,22 @@ public class Parser{
     //start of expression parsing
     private void list() throws IOException{
         while(look.tag != Tag.EOF){
-            stmt();
+            Expr e = stmt();
             match(';');
             emit(bw1, "; ");
             Number num = machine.pop();
-            if(SymbolT.get(Rhs).type == Type.Int){
-                emit(bw1,Integer.toString(num.intValue()));
-            }else if(SymbolT.get(Rhs).type == Type.Float){
-                emit(bw1,num.toString());
+            if(e.type == Type.Int){
+                 emit(bw1,Integer.toString(num.intValue()));
+            }else if(e.type == Type.Float){
+                 emit(bw1,num.toString());
             }
-            
             bw1.newLine();
         }
         bw1.close();
         bw2.close();
     }
 
-   private void stmt() throws IOException{
+   private Expr stmt() throws IOException{
        /*S->id=E | E if it starts with '(' or num then S->E is applied
         * if it starts with id check for the next token while storing the current token in temporary variable
         * if the next token is '=' then S->id=E is applied
@@ -124,13 +123,13 @@ public class Parser{
        if(look.tag == '(' || look.tag == Tag.NUM || look.tag == Tag.REAL){
             expression();
             Expr t = e.gen();
-            t.reduce();
+            return t.reduce();
        }else if( look.tag == Tag.ID){
             Token temp = look;
             match(Tag.ID);
-            Word w = (Word)temp;
-            emit(bw1,w.lexeme+" ");
+            Word w = (Word)temp;       
             if(look.tag == '='){
+                emit(bw1,w.lexeme+" ");
                 Rhs = temp;
                 move();
                 Id id = SymbolT.get(temp);
@@ -140,17 +139,18 @@ public class Parser{
                 Stmt s =new interCode.Set(id,expression());
                 emit(bw1,"= ");
                 var.put(w,machine.peek());
-                s.gen();
+                return s.gen();
             }else{
                 movable = false;
                 front = look;
                 look = temp;
                 expression();
                 Expr t = e.gen();
-                t.reduce();
+                return t.reduce();
             }
        }else
            error ("syntax error") ;
+           return null;
    }
 
    private Expr expression() throws IOException{
